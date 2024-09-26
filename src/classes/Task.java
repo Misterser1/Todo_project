@@ -2,15 +2,18 @@ package classes;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.concurrent.TimeUnit;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 public class Task extends JPanel {
     private JLabel index;
-    private  JTextField taskName;
-    private  JButton done;
+    private JTextField taskName;
+    private JButton done;
 
     private boolean checked;
-    //Задания
+    private boolean isPlaceholderVisible; // Для отслеживания состояния плейсхолдера
+
+    // Задания
     Task() {
         this.setPreferredSize(new Dimension(40, 20));
         this.setBackground(Color.black);
@@ -28,6 +31,27 @@ public class Task extends JPanel {
         taskName.setBorder(BorderFactory.createEmptyBorder());
         taskName.setBackground(Color.gray);
 
+        isPlaceholderVisible = true;
+
+        // Добавление FocusListener для JTextField
+        taskName.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (isPlaceholderVisible) {
+                    taskName.setText("");
+                    isPlaceholderVisible = false;
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (taskName.getText().isEmpty()) {
+                    taskName.setText("Твое задание здесь");
+                    isPlaceholderVisible = true;
+                }
+            }
+        });
+
         this.add(taskName, BorderLayout.CENTER);
 
         done = new JButton("Готово");
@@ -41,8 +65,7 @@ public class Task extends JPanel {
         return done;
     }
 
-    public boolean getState()
-    {
+    public boolean getState() {
         return checked;
     }
 
